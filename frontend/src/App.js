@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-const API = "http://localhost:8000";
+const API = "https://learnspark-backend-u8px.onrender.com";
 const supabase = createClient(
   "https://rtbttuuzaioustbugkkq.supabase.co",
   "sb_publishable_JnVNtHN3Ysr5JVZozC9-SQ_cjKjioR-"
