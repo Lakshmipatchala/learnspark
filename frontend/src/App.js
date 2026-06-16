@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-const API = "https://learnspark-backend-u8px.onrender.com";
 const supabase = createClient(
-  "https://rtbttuuzaioustbugkkq.supabase.co",
-  "sb_publishable_JnVNtHN3Ysr5JVZozC9-SQ_cjKjioR-"
-);
-
-const GRADES = ["PreK","Kindergarten","1st Grade","2nd Grade","3rd Grade","4th Grade","5th Grade","6th Grade","7th Grade","8th Grade","9th Grade","10th Grade","11th Grade","12th Grade"];
+  "https://rtbttuuzaioustbugkkq.supabase.co", "eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJyb2xlIjogImFub24iLCAiaXNzIjogInN1cGFiYXNlIiwgImlhdCI6IDE3MDAwMDAwMDAsICJleHAiOiAxOTAwMDAwMDAwfQ.d7KUsVCxFqd80PGu20Hp4MY4ryiPl5UETdH-9RqIs1E",
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true
+    }
+  }
+);const GRADES = ["PreK","Kindergarten","1st Grade","2nd Grade","3rd Grade","4th Grade","5th Grade","6th Grade","7th Grade","8th Grade","9th Grade","10th Grade","11th Grade","12th Grade"];
 const SUBJECTS = {
   Math: ["Numbers & Counting","Addition & Subtraction","Multiplication & Division","Fractions","Decimals","Algebra Basics","Geometry","Statistics"],
   English: ["Alphabet & Phonics","Sight Words","Reading Comprehension","Grammar","Writing Skills","Vocabulary","Poetry","Essay Writing"],
