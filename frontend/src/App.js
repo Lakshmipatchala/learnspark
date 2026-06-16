@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
+const API = "https://learnspark-backend-u8px.onrender.com";
+
 const supabase = createClient(
-  "https://rtbttuuzaioustbugkkq.supabase.co", "eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJyb2xlIjogImFub24iLCAiaXNzIjogInN1cGFiYXNlIiwgImlhdCI6IDE3MDAwMDAwMDAsICJleHAiOiAxOTAwMDAwMDAwfQ.d7KUsVCxFqd80PGu20Hp4MY4ryiPl5UETdH-9RqIs1E",
+  "https://rtbttuuzaioustbugkkq.supabase.co",
+	"eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJyb2xlIjogImFub24iLCAiaXNzIjogInN1cGFiYXNlIiwgI	mlhdCI6IDE3MDAwMDAwMDAsICJleHAiOiAxOTAwMDAwMDAwfQ.d7KUsVCxFqd80PGu20Hp4MY4ryiPl5UETdH-9RqIs	1E",
   {
     auth: {
       autoRefreshToken: true,
