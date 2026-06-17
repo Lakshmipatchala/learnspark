@@ -5,8 +5,7 @@ const API = "https://learnspark-backend-u8px.onrender.com";
 
 const supabase = createClient(
   "https://rtbttuuzaioustbugkkq.supabase.co",
-	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE5MDAwMDAwMDB9.pqTpvOgdj7u7LxLSpvmJWbV9i3pD-bbbicIWiqpDLKs
-",
+	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE5MDAwMDAwMDB9.pqTpvOgdj7u7LxLSpvmJWbV9i3pD-bbbicIWiqpDLKs",
   {
     auth: {
       autoRefreshToken: true,
