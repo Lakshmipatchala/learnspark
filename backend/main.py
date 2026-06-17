@@ -81,3 +81,24 @@ def get_grades():
 @app.get("/subjects")
 def get_subjects():
     return {"subjects":{"Math":["Numbers & Counting","Fractions","Algebra Basics","Geometry"],"English":["Reading Comprehension","Grammar","Writing Skills","Vocabulary"],"Science":["Human Body","Solar System","Forces & Motion","Biology"],"Social Studies":["Maps & Geography","US History","World Cultures","Government & Civics"]}}
+import requests as http_requests
+
+@app.post("/generate-audio")
+async def generate_audio(req: LessonRequest):
+    lesson_text = f"Welcome to today's lesson on {req.topic}. Let's learn together!"
+    
+    url = f"https://texttospeech.googleapis.com/v1/text:synthesize?key={os.getenv('GOOGLE_API_KEY')}"
+    
+    payload = {
+        "input": {"text": lesson_text},
+        "voice": {"languageCode": "en-US", "name": "en-US-Neural2-F"},
+        "audioConfig": {"audioEncoding": "MP3"}
+    }
+    
+    try:
+        response = http_requests.post(url, json=payload)
+        response.raise_for_status()
+        audio_data = response.json()["audioContent"]
+        return {"audio_base64": audio_data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
