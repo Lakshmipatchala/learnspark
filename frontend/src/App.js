@@ -238,23 +238,23 @@ function LessonScreen({ config, lesson, onTakeQuiz, onBack }) {
   const [currentSegment, setCurrentSegment] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
-const generateVideo = async () => {
-  setVideoLoading(true);
-  try {
-    const res = await fetch(`${API}/generate-video-audio`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ grade: config.grade, subject: config.subject, topic: config.topic, lesson })
-    });
-    const data = await res.json();
-    setVideoSegments(data.segments);
-    setShowVideo(true);
-    setCurrentSegment(0);
-  } catch {
-    alert("Could not generate video. Try again!");
-  }
-  setVideoLoading(false);
-};
+  const generateVideo = async () => {
+    setVideoLoading(true);
+    try {
+      const res = await fetch(`${API}/generate-video-audio`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ grade: config.grade, subject: config.subject, topic: config.topic, lesson })
+      });
+      const data = await res.json();
+      setVideoSegments(data.segments);
+      setShowVideo(true);
+      setCurrentSegment(0);
+    } catch {
+      alert("Could not generate video. Try again!");
+    }
+    setVideoLoading(false);
+  };
 
 const playSegment = (index) => {
   if (!videoSegments || index >= videoSegments.length) {
