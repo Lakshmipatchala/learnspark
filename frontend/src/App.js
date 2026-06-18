@@ -272,15 +272,6 @@ const playSegment = (index) => {
   audio.play();
   audio.onended = () => playSegment(index + 1);
 };
-    const data = await res.json();
-    const audio = new Audio(`data:audio/mp3;base64,${data.audio_base64}`);
-    setAudioUrl(audio);
-    audio.play();
-  } catch {
-    alert("Could not play audio. Try again!");
-  }
-  setLoadingAudio(false);
-};
   const c = COLORS[config.subject];
   const askQuestion = async () => {
     if (!question.trim()) return; setAsking(true);
@@ -299,13 +290,7 @@ const playSegment = (index) => {
       <div style={{ background: c.bg, borderRadius: 16, padding: 24, marginBottom: 20, border: `1px solid ${c.light}` }}>
         <div style={{ fontSize: 48, marginBottom: 8 }}>{lesson.emoji}</div>
         <h2 style={{ fontSize: 24, fontWeight: 700, color: "#111827", margin: "0 0 8px" }}>{lesson.title}</h2>
-	<button onClick={playLessonAudio} disabled={loadingAudio} style={{
-  padding: "8px 16px", borderRadius: 10, border: "none",
-  background: c.accent, color: "white", fontWeight: 600,
-  cursor: "pointer", fontSize: 13, marginTop: 8, marginBottom: 8
-}}>
-  {loadingAudio ? "Loading audio..." : "🔊 Listen to Lesson"}
-</button>
+	
         <p style={{ color: "#4B5563", margin: 0, lineHeight: 1.6 }}>{lesson.introduction}</p>
       </div>
 	{!showVideo && (
