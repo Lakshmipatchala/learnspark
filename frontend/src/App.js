@@ -232,14 +232,46 @@ function LessonScreen({ config, lesson, onTakeQuiz, onBack }) {
   const [audioUrl, setAudioUrl] = useState(null);
   const [loadingAudio, setLoadingAudio] = useState(false);
 
-  const playLessonAudio = async () => {
-  setLoadingAudio(true);
+  const [videoSegments, setVideoSegments] = useState(null);
+  const [videoLoading, setVideoLoading] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
+  const [currentSegment, setCurrentSegment] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+const generateVideo = async () => {
+  setVideoLoading(true);
   try {
-    const res = await fetch(`${API}/generate-audio`, {
+    const res = await fetch(`${API}/generate-video-audio`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ grade: config.grade, subject: config.subject, topic: config.topic })
+      body: JSON.stringify({ grade: config.grade, subject: config.subject, topic: config.topic, lesson })
     });
+    const data = await res.json();
+    setVideoSegments(data.segments);
+    setShowVideo(true);
+    setCurrentSegment(0);
+  } catch {
+    alert("Could not generate video. Try again!");
+  }
+  setVideoLoading(false);
+};
+
+const playSegment = (index) => {
+  if (!videoSegments || index >= videoSegments.length) {
+    setIsPlaying(false);
+    return;
+  }
+  const seg = videoSegments[index];
+  if (!seg.audio_base64) {
+    playSegment(index + 1);
+    return;
+  }
+  const audio = new Audio(`data:audio/mp3;base64,${seg.audio_base64}`);
+  setCurrentSegment(index);
+  setIsPlaying(true);
+  audio.play();
+  audio.onended = () => playSegment(index + 1);
+};
     const data = await res.json();
     const audio = new Audio(`data:audio/mp3;base64,${data.audio_base64}`);
     setAudioUrl(audio);
@@ -276,6 +308,73 @@ function LessonScreen({ config, lesson, onTakeQuiz, onBack }) {
 </button>
         <p style={{ color: "#4B5563", margin: 0, lineHeight: 1.6 }}>{lesson.introduction}</p>
       </div>
+	{!showVideo && (
+  <button onClick={generateVideo} disabled={videoLoading} style={{
+    width: "100%", padding: "14px", borderRadius: 14, border: "none",
+    background: "linear-gradient(135deg,#F59E0B,#EF4444)", color: "white",
+    fontSize: 15, fontWeight: 700, cursor: "pointer", marginBottom: 20,
+    boxShadow: "0 4px 20px rgba(239,68,68,0.3)"
+  }}>
+    {videoLoading ? "🎬 Creating your video..." : "🎬 Watch AI Video Lesson"}
+  </button>
+)}
+
+{showVideo && videoSegments && (
+  <div style={{
+    background: "#111827", borderRadius: 16, padding: 24, marginBottom: 24,
+    minHeight: 280, display: "flex", flexDirection: "column",
+    justifyContent: "center", alignItems: "center", position: "relative"
+  }}>
+    <div style={{ textAlign: "center", color: "white" }}>
+      {videoSegments[currentSegment]?.type === "intro" && (
+        <>
+          <div style={{ fontSize: 56, marginBottom: 12 }}>{videoSegments[currentSegment].emoji}</div>
+          <h2 style={{ fontSize: 26, marginBottom: 10 }}>{videoSegments[currentSegment].title}</h2>
+          <p style={{ fontSize: 16, opacity: 0.9, maxWidth: 480 }}>{videoSegments[currentSegment].text}</p>
+        </>
+      )}
+      {videoSegments[currentSegment]?.type === "section" && (
+        <>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>📘</div>
+          <h3 style={{ fontSize: 22, marginBottom: 10 }}>{videoSegments[currentSegment].heading}</h3>
+          <p style={{ fontSize: 15, opacity: 0.9, maxWidth: 480 }}>{videoSegments[currentSegment].text}</p>
+        </>
+      )}
+      {videoSegments[currentSegment]?.type === "fun_fact" && (
+        <>
+          <div style={{ fontSize: 48, marginBottom: 12 }}>⭐</div>
+          <h3 style={{ fontSize: 20, marginBottom: 10 }}>Fun Fact!</h3>
+          <p style={{ fontSize: 16, opacity: 0.9, maxWidth: 480 }}>{videoSegments[currentSegment].text}</p>
+        </>
+      )}
+      {videoSegments[currentSegment]?.type === "summary" && (
+        <>
+          <div style={{ fontSize: 48, marginBottom: 12 }}>📝</div>
+          <h3 style={{ fontSize: 20, marginBottom: 10 }}>Summary</h3>
+          <p style={{ fontSize: 16, opacity: 0.9, maxWidth: 480 }}>{videoSegments[currentSegment].text}</p>
+        </>
+      )}
+    </div>
+
+    <div style={{ display: "flex", gap: 6, marginTop: 24 }}>
+      {videoSegments.map((_, i) => (
+        <div key={i} style={{
+          width: 8, height: 8, borderRadius: "50%",
+          background: i === currentSegment ? "#F59E0B" : "rgba(255,255,255,0.3)"
+        }} />
+      ))}
+    </div>
+
+    {!isPlaying ? (
+      <button onClick={() => playSegment(0)} style={{
+        marginTop: 20, padding: "10px 24px", borderRadius: 99, border: "none",
+        background: "#F59E0B", color: "white", fontWeight: 700, cursor: "pointer"
+      }}>▶ Play Video Lesson</button>
+    ) : (
+      <p style={{ marginTop: 16, color: "rgba(255,255,255,0.6)", fontSize: 13 }}>🔊 Playing...</p>
+    )}
+  </div>
+)}
       {lesson.sections.map((sec, i) => (
         <div key={i} style={{ background: "white", border: "1px solid #E5E7EB", borderRadius: 14, padding: 20, marginBottom: 14 }}>
           <h3 style={{ fontSize: 17, fontWeight: 700, color: "#111827", margin: "0 0 10px" }}>{sec.heading}</h3>
