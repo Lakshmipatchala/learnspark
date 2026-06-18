@@ -293,16 +293,16 @@ const playSegment = (index) => {
 	
         <p style={{ color: "#4B5563", margin: 0, lineHeight: 1.6 }}>{lesson.introduction}</p>
       </div>
-	{!showVideo && (
-  <button onClick={generateVideo} disabled={videoLoading} style={{
-    width: "100%", padding: "14px", borderRadius: 14, border: "none",
-    background: "linear-gradient(135deg,#F59E0B,#EF4444)", color: "white",
-    fontSize: 15, fontWeight: 700, cursor: "pointer", marginBottom: 20,
-    boxShadow: "0 4px 20px rgba(239,68,68,0.3)"
-  }}>
-    {videoLoading ? "🎬 Creating your video..." : "🎬 Watch AI Video Lesson"}
-  </button>
-)}
+      {!showVideo && (
+        <button onClick={generateVideo} disabled={videoLoading} style={{
+          width: "100%", padding: "14px", borderRadius: 14, border: "none",
+          background: "linear-gradient(135deg,#F59E0B,#EF4444)", color: "white",
+          fontSize: 15, fontWeight: 700, cursor: "pointer", marginBottom: 20,
+          boxShadow: "0 4px 20px rgba(239,68,68,0.3)"
+        }}>
+          {videoLoading ? "🎬 Creating your video..." : "🎬 Watch AI Video Lesson"}
+        </button>
+      )}
 
 {showVideo && videoSegments && (
   <div style={{
