@@ -83,22 +83,46 @@ def get_subjects():
     return {"subjects":{"Math":["Numbers & Counting","Fractions","Algebra Basics","Geometry"],"English":["Reading Comprehension","Grammar","Writing Skills","Vocabulary"],"Science":["Human Body","Solar System","Forces & Motion","Biology"],"Social Studies":["Maps & Geography","US History","World Cultures","Government & Civics"]}}
 import requests as http_requests
 
-@app.post("/generate-audio")
-async def generate_audio(req: LessonRequest):
-    lesson_text = f"Welcome to today's lesson on {req.topic}. Let's learn together!"
-    
+class VideoRequest(BaseModel):
+    grade: str
+    subject: str
+    topic: str
+    lesson: dict
+
+@app.post("/generate-video-audio")
+async def generate_video_audio(req: VideoRequest):
+    lesson = req.lesson
+    segments = []
+
+    segments.append({"type": "intro", "text": lesson.get("introduction", ""), "title": lesson.get("title", ""), "emoji": lesson.get("emoji", "")})
+
+    for sec in lesson.get("sections", []):
+        segments.append({"type": "section", "heading": sec.get("heading", ""), "text": sec.get("content", "") + " " + sec.get("example", "")})
+
+    segments.append({"type": "fun_fact", "text": lesson.get("fun_fact", "")})
+    segments.append({"type": "summary", "text": lesson.get("summary", "")})
+
     url = f"https://texttospeech.googleapis.com/v1/text:synthesize?key={os.getenv('GOOGLE_API_KEY')}"
-    
-    payload = {
-        "input": {"text": lesson_text},
-        "voice": {"languageCode": "en-US", "name": "en-US-Neural2-F"},
-        "audioConfig": {"audioEncoding": "MP3"}
-    }
-    
-    try:
-        response = http_requests.post(url, json=payload)
-        response.raise_for_status()
-        audio_data = response.json()["audioContent"]
-        return {"audio_base64": audio_data}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    results = []
+
+    for seg in segments:
+        narration = seg.get("text", "")
+        if not narration.strip():
+            continue
+        payload = {
+            "input": {"text": narration},
+            "voice": {"languageCode": "en-US", "name": "en-US-Neural2-F"},
+            "audioConfig": {"audioEncoding": "MP3", "speakingRate": 0.95}
+        }
+        try:
+            response = http_requests.post(url, json=payload)
+            response.raise_for_status()
+            audio_data = response.json()["audioContent"]
+            seg["audio_base64"] = audio_data
+            results.append(seg)
+        except Exception as e:
+            seg["audio_base64"] = None
+            seg["error"] = str(e)
+            results.append(seg)
+
+    return {"segments": results}
